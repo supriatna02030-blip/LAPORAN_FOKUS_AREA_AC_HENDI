@@ -2,85 +2,90 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LAP.FOKUS MKT PER JAM AREA P'HENDY - FINAL 19 TOKO</title>
+<title>LAPORAN FOKUS MARKET PER JAM - AREA P'HENDY | Professional</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-body{background:#050505;color:#ddd;font-size:11px;font-family:system-ui}
-.mono{font-family:monospace}
-.edit{cursor:text}
-.edit:focus{outline:2px solid #facc15;background:#222!important}
-.tgt{background:#1e1e1e;color:#facc15;text-align:center;font-weight:bold}
-.ok{color:#22ff55!important;font-weight:bold;text-shadow:0 0 5px #22ff55}
-.bad{color:#ff3333!important;font-weight:bold}
-.total{background:#222;font-weight:bold;text-align:center}
+*{font-family:'Inter',system-ui} .mono{font-family:'JetBrains Mono',monospace}
+body{background:#0a0a0b;color:#e5e5e5}
+.edit{transition:all .15s;cursor:text}
+.edit:focus{outline:2px solid #facc15;background:#27272a!important;transform:scale(1.05)}
+.ok{color:#4ade80!important;font-weight:800;background:rgba(34,197,94,0.1)}
+.bad{color:#f87171!important;font-weight:700;background:rgba(239,68,68,0.1)}
+.tgt{background:#18181b;color:#facc15;font-weight:800;text-align:center;border:1px solid #3f3f46}
+.tot{background:#27272a;font-weight:800;text-align:center}
+.acv-ok{background:#14532d;color:#4ade80;font-weight:800}
+.acv-bad{background:#7f1d1d;color:#f87171;font-weight:800}
+.acv-mid{background:#78350f;color:#fbbf24;font-weight:800}
 </style>
 </head>
-<body class="pb-16">
-<div class="bg-yellow-400 text-black p-2 sticky top-0 z-30">
-<div class="flex flex-wrap justify-between items-center gap-2">
-<div><div class="font-black text-[13px]">LAP.FOKUS MKT PER JAM AREA P'HENDY - 19 TOKO FINAL</div><div class="text-[10px]">KLIK ANGKA UNTUK ISI | WARNA HIJAU = CAPAI TARGET PER SHIFT, MERAH = BELUM | SAVE PER TANGGAL</div></div>
-<div class="flex gap-2 items-center">
-<input type="date" id="tgl" class="bg-black text-yellow-400 px-3 py-1.5 rounded font-bold text-xs border" onchange="changeDate()">
-<button onclick="saveAll()" class="bg-green-600 text-white px-5 py-2 rounded font-bold text-xs">💾 SIMPAN HARI INI</button>
-<button onclick="exportCSV()" class="bg-black text-white px-3 py-2 rounded text-xs">Export CSV</button>
+<body>
+<div class="sticky top-0 z-40 bg-zinc-950 border-b border-zinc-800">
+<div class="bg-gradient-to-r from-yellow-400 to-amber-400 text-black px-4 py-3 flex flex-wrap justify-between items-center">
+<div class="flex items-center gap-3"><div class="bg-black text-yellow-400 w-10 h-10 rounded-lg flex items-center justify-center font-black">F</div><div><div class="font-black text-[15px]">LAP.FOKUS MKT PER JAM AREA P'HENDY</div><div class="text-[10px] font-bold opacity-80">19 STORES • PSM 100 | PWP 100 | SERBA 50 | SEGER 50 • PER SHIFT MERAH/HIJAU</div></div></div>
+<div class="flex items-center gap-2"><input type="date" id="tgl" class="bg-black text-yellow-400 border border-zinc-700 px-3 py-2 rounded-lg text-xs font-bold mono" onchange="changeDate()"><button onclick="saveAll()" class="bg-black text-yellow-400 px-5 py-2.5 rounded-lg font-black text-xs">💾 SIMPAN</button><button onclick="exportCSV()" class="bg-zinc-800 text-white px-4 py-2.5 rounded-lg font-bold text-xs">Export CSV</button></div>
 </div>
+<div class="px-4 py-2 bg-zinc-900 flex flex-wrap gap-2 text-[10px] font-bold"><span id="infoDate" class="bg-yellow-400 text-black px-3 py-1 rounded-full"></span><span class="bg-zinc-800 px-3 py-1 rounded-full">PSM TGT 100</span><span class="bg-zinc-800 px-3 py-1 rounded-full">PWP TGT 100</span><span class="bg-zinc-800 px-3 py-1 rounded-full">SERBA TGT 50</span><span class="bg-zinc-800 px-3 py-1 rounded-full">SEGER TGT 50</span><span id="savedBadge" class="bg-green-600 text-white px-3 py-1 rounded-full hidden">✓ Tersimpan</span></div>
 </div>
-<div class="flex gap-2 mt-2 text-[10px]"><span id="info" class="bg-black text-yellow-400 px-3 py-1 rounded"></span><span id="saved" class="bg-green-600 text-white px-3 py-1 rounded hidden">✓ Tersimpan</span></div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-3">
+<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4"><div class="text-[10px] text-zinc-500 font-bold">TOTAL STORE</div><div class="text-3xl font-black mono">19</div></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4"><div class="text-[10px] text-zinc-500 font-bold">TOTAL TARGET</div><div id="kpiTgt" class="text-3xl font-black mono text-yellow-400">0</div></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4"><div class="text-[10px] text-zinc-500 font-bold">TOTAL ACTUAL</div><div id="kpiAct" class="text-3xl font-black mono text-green-400">0</div></div>
+<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4"><div class="text-[10px] text-zinc-500 font-bold">AVG ACV</div><div id="kpiAcv" class="text-3xl font-black mono">0%</div></div>
 </div>
-<div class="overflow-auto p-1" style="max-height:80vh">
-<table class="w-full mono border-collapse text-[10px]">
-<thead class="sticky top-0 z-10 bg-cyan-400 text-black">
-<tr>
-<th class="border p-1">NO</th><th class="border p-1">KODE</th><th class="border p-1">NAMA</th>
-<th class="border p-1 bg-yellow-300">PSM T</th><th class="border p-1">PSM S1</th><th class="border p-1">PSM S2</th><th class="border p-1">TOT</th><th class="border p-1">ACV</th>
-<th class="border p-1 bg-yellow-300">PWP T</th><th class="border p-1">PWP S1</th><th class="border p-1">PWP S2</th><th class="border p-1">TOT</th><th class="border p-1">ACV</th>
-<th class="border p-1 bg-yellow-300">SERBA T</th><th class="border p-1">SERBA S1</th><th class="border p-1">SERBA S2</th><th class="border p-1">TOT</th><th class="border p-1">ACV</th>
-<th class="border p-1 bg-yellow-300">SEGER T</th><th class="border p-1">SEGER S1</th><th class="border p-1">SEGER S2</th><th class="border p-1">TOT</th><th class="border p-1">ACV</th>
-</tr>
+<div class="mx-3 bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+<div class="overflow-auto" style="max-height:68vh">
+<table class="w-full mono text-[11px] border-collapse">
+<thead class="sticky top-0 z-20">
+<tr class="bg-zinc-800 text-zinc-400 text-[10px]"><th class="p-2 border border-zinc-700">NO</th><th class="p-2 border border-zinc-700">KODE</th><th class="p-2 border border-zinc-700 min-w-[160px]">NAMA TOKO</th><th colspan="5" class="p-2 border border-zinc-700 bg-yellow-400 text-black">PSM • TARGET 100</th><th colspan="5" class="p-2 border border-zinc-700 bg-emerald-400 text-black">PWP • TARGET 100</th><th colspan="5" class="p-2 border border-zinc-700 bg-orange-400 text-black">SERBA • TARGET 50</th><th colspan="5" class="p-2 border border-zinc-700 bg-cyan-400 text-black">SEGER • TARGET 50</th></tr>
+<tr class="bg-zinc-950 text-[9px] text-zinc-400"><th class="border border-zinc-700"></th><th class="border border-zinc-700"></th><th class="border border-zinc-700"></th><th class="border p-1.5">TGT</th><th class="border p-1.5 text-green-400">S1</th><th class="border p-1.5 text-blue-400">S2</th><th class="border p-1.5">TOTAL</th><th class="border p-1.5">ACV%</th><th class="border p-1.5">TGT</th><th class="border p-1.5 text-green-400">S1</th><th class="border p-1.5 text-blue-400">S2</th><th class="border p-1.5">TOTAL</th><th class="border p-1.5">ACV%</th><th class="border p-1.5">TGT</th><th class="border p-1.5 text-green-400">S1</th><th class="border p-1.5 text-blue-400">S2</th><th class="border p-1.5">TOTAL</th><th class="border p-1.5">ACV%</th><th class="border p-1.5">TGT</th><th class="border p-1.5 text-green-400">S1</th><th class="border p-1.5 text-blue-400">S2</th><th class="border p-1.5">TOTAL</th><th class="border p-1.5">ACV%</th></tr>
 </thead>
-<tbody id="tbody"></tbody>
+<tbody id="tbody" class="bg-zinc-950"></tbody>
+<tfoot class="sticky bottom-0 bg-yellow-400 text-black font-black"><tr><td colspan="3" class="border p-2 text-center bg-black text-yellow-400">TOTAL 19 TOKO</td><td id="f1" class="border p-1 text-center"></td><td id="f2" class="border"></td><td id="f3" class="border"></td><td id="f4" class="border"></td><td id="f5" class="border"></td><td id="f6" class="border"></td><td id="f7" class="border"></td><td id="f8" class="border"></td><td id="f9" class="border"></td><td id="f10" class="border"></td><td id="f11" class="border"></td><td id="f12" class="border"></td><td id="f13" class="border"></td><td id="f14" class="border"></td><td id="f15" class="border"></td><td id="f16" class="border"></td><td id="f17" class="border"></td><td id="f18" class="border"></td><td id="f19" class="border"></td><td id="f20" class="border"></td></tr></tfoot>
 </table>
 </div>
-<div class="p-2 bg-zinc-900 mt-1"><div class="text-[10px] font-bold">📅 HISTORY:</div><div id="hist" class="flex gap-1 overflow-auto mt-1"></div></div>
+</div>
+<div class="m-3 bg-zinc-900 border border-zinc-800 rounded-xl p-3"><div class="text-[11px] font-black text-zinc-400 mb-2">📅 HISTORY</div><div id="hist" class="flex gap-2 overflow-auto"></div></div>
 <script>
 const K=['J937','K791','K792','K796','K797','K930','KD10','KD32','KD70','KE48','KF85','KF33','KF37','KF58','KF67','KG22','KE19','KE94','KF71'];
 const N=['ANGGREK III','KARBELA','KARBELA 2','KPDK','SAMPOERNA 5','KARBELA 3','SETIABUDI BARAT','BEK MURAD','GAMA TOWER','OB GEDUNG WI','ST. SUDIRMAN','KARET PEDURENAN','KAWI RAYA 16','JPM DUKUH ATAS','GUNTUR RAYA 14','TANGKUBAN PERAHU','KENDAL 24','FPG BLORA MENTENG','DS KUNINGAN'];
-function mk(){return {t:10,s1:0,s2:0};}
-function load(d){let r=localStorage.getItem('FINAL_'+d);if(r)return JSON.parse(r);return K.map((k,i)=>({kode:k,nama:N[i],psm:mk(),pwp:mk(),serba:mk(),seger:mk()}));}
-function today(){return new Date().toISOString().slice(0,10);}let cur=localStorage.getItem('lastFinal')||today();document.getElementById('tgl').value=cur;let data=load(cur);
+const TARGETS={psm:100,pwp:100,serba:50,seger:50};
+function mk(cat){return {t:TARGETS[cat],s1:0,s2:0};}
+function load(d){let r=localStorage.getItem('PRO_'+d);if(r)return JSON.parse(r);return K.map((k,i)=>({kode:k,nama:N[i],psm:mk('psm'),pwp:mk('pwp'),serba:mk('serba'),seger:mk('seger')}));}
+function today(){return new Date().toISOString().slice(0,10);}let cur=localStorage.getItem('lastPro')||today();document.getElementById('tgl').value=cur;let data=load(cur);
 function calc(it){let tot=it.s1+it.s2;return{tot,acv:it.t?Math.round(tot/it.t*100):0};}
 function col(a,t){return a>=t?'ok':'bad';}
+function acvClass(a){if(a>=100)return 'acv-ok';if(a>=70)return 'acv-mid';return 'acv-bad';}
 function render(){
 let tb=document.getElementById('tbody');tb.innerHTML='';
+let S={psm:{t:0,s1:0,s2:0,tot:0},pwp:{t:0,s1:0,s2:0,tot:0},serba:{t:0,s1:0,s2:0,tot:0},seger:{t:0,s1:0,s2:0,tot:0}};
 data.forEach((r,i)=>{
 let cp=calc(r.psm),cw=calc(r.pwp),cs=calc(r.serba),cg=calc(r.seger);
-tb.innerHTML+=`<tr class='border-b border-zinc-800'><td class='border p-1 text-center'>${i+1}</td><td class='border p-1 font-bold'>${r.kode}</td><td class='border p-1'>${r.nama}</td>
-<td contenteditable class='edit border p-1 tgt' onblur='up(${i},\"psm\",\"t\",this.innerText)'>${r.psm.t}</td>
-<td contenteditable class='edit border p-1 text-center ${col(r.psm.s1,r.psm.t)}' onblur='up(${i},\"psm\",\"s1\",this.innerText)'>${r.psm.s1}</td>
-<td contenteditable class='edit border p-1 text-center ${col(r.psm.s2,r.psm.t)}' onblur='up(${i},\"psm\",\"s2\",this.innerText)'>${r.psm.s2}</td>
-<td class='border total'>${cp.tot}</td><td class='border text-center ${cp.acv>=100?'ok':'bad'}'>${cp.acv}%</td>
-<td contenteditable class='edit border p-1 tgt' onblur='up(${i},\"pwp\",\"t\",this.innerText)'>${r.pwp.t}</td>
-<td contenteditable class='edit border p-1 text-center ${col(r.pwp.s1,r.pwp.t)}' onblur='up(${i},\"pwp\",\"s1\",this.innerText)'>${r.pwp.s1}</td>
-<td contenteditable class='edit border p-1 text-center ${col(r.pwp.s2,r.pwp.t)}' onblur='up(${i},\"pwp\",\"s2\",this.innerText)'>${r.pwp.s2}</td>
-<td class='border total'>${cw.tot}</td><td class='border text-center ${cw.acv>=100?'ok':'bad'}'>${cw.acv}%</td>
-<td contenteditable class='edit border p-1 tgt' onblur='up(${i},\"serba\",\"t\",this.innerText)'>${r.serba.t}</td>
-<td contenteditable class='edit border p-1 text-center ${col(r.serba.s1,r.serba.t)}' onblur='up(${i},\"serba\",\"s1\",this.innerText)'>${r.serba.s1}</td>
-<td contenteditable class='edit border p-1 text-center ${col(r.serba.s2,r.serba.t)}' onblur='up(${i},\"serba\",\"s2\",this.innerText)'>${r.serba.s2}</td>
-<td class='border total'>${cs.tot}</td><td class='border text-center ${cs.acv>=100?'ok':'bad'}'>${cs.acv}%</td>
-<td contenteditable class='edit border p-1 tgt' onblur='up(${i},\"seger\",\"t\",this.innerText)'>${r.seger.t}</td>
-<td contenteditable class='edit border p-1 text-center ${col(r.seger.s1,r.seger.t)}' onblur='up(${i},\"seger\",\"s1\",this.innerText)'>${r.seger.s1}</td>
-<td contenteditable class='edit border p-1 text-center ${col(r.seger.s2,r.seger.t)}' onblur='up(${i},\"seger\",\"s2\",this.innerText)'>${r.seger.s2}</td>
-<td class='border total'>${cg.tot}</td><td class='border text-center ${cg.acv>=100?'ok':'bad'}'>${cg.acv}%</td>
+S.psm.t+=r.psm.t;S.psm.s1+=r.psm.s1;S.psm.s2+=r.psm.s2;S.psm.tot+=cp.tot;
+S.pwp.t+=r.pwp.t;S.pwp.s1+=r.pwp.s1;S.pwp.s2+=r.pwp.s2;S.pwp.tot+=cw.tot;
+S.serba.t+=r.serba.t;S.serba.s1+=r.serba.s1;S.serba.s2+=r.serba.s2;S.serba.tot+=cs.tot;
+S.seger.t+=r.seger.t;S.seger.s1+=r.seger.s1;S.seger.s2+=r.seger.s2;S.seger.tot+=cg.tot;
+tb.innerHTML+=`<tr class='border-b border-zinc-800'><td class='border border-zinc-800 p-2 text-center'>${i+1}</td><td class='border border-zinc-800 p-2 font-bold'>${r.kode}</td><td class='border border-zinc-800 p-2'>${r.nama}</td>
+<td class='border border-zinc-800 p-2 tgt'>${r.psm.t}</td><td contenteditable class='edit border border-zinc-800 p-2 text-center ${col(r.psm.s1,r.psm.t)}' onblur='up(${i},\"psm\",\"s1\",this.innerText)'>${r.psm.s1}</td><td contenteditable class='edit border border-zinc-800 p-2 text-center ${col(r.psm.s2,r.psm.t)}' onblur='up(${i},\"psm\",\"s2\",this.innerText)'>${r.psm.s2}</td><td class='border border-zinc-800 p-2 tot'>${cp.tot}</td><td class='border border-zinc-800 p-2 text-center ${acvClass(cp.acv)}'>${cp.acv}%</td>
+<td class='border border-zinc-800 p-2 tgt'>${r.pwp.t}</td><td contenteditable class='edit border border-zinc-800 p-2 text-center ${col(r.pwp.s1,r.pwp.t)}' onblur='up(${i},\"pwp\",\"s1\",this.innerText)'>${r.pwp.s1}</td><td contenteditable class='edit border border-zinc-800 p-2 text-center ${col(r.pwp.s2,r.pwp.t)}' onblur='up(${i},\"pwp\",\"s2\",this.innerText)'>${r.pwp.s2}</td><td class='border border-zinc-800 p-2 tot'>${cw.tot}</td><td class='border border-zinc-800 p-2 text-center ${acvClass(cw.acv)}'>${cw.acv}%</td>
+<td class='border border-zinc-800 p-2 tgt'>${r.serba.t}</td><td contenteditable class='edit border border-zinc-800 p-2 text-center ${col(r.serba.s1,r.serba.t)}' onblur='up(${i},\"serba\",\"s1\",this.innerText)'>${r.serba.s1}</td><td contenteditable class='edit border border-zinc-800 p-2 text-center ${col(r.serba.s2,r.serba.t)}' onblur='up(${i},\"serba\",\"s2\",this.innerText)'>${r.serba.s2}</td><td class='border border-zinc-800 p-2 tot'>${cs.tot}</td><td class='border border-zinc-800 p-2 text-center ${acvClass(cs.acv)}'>${cs.acv}%</td>
+<td class='border border-zinc-800 p-2 tgt'>${r.seger.t}</td><td contenteditable class='edit border border-zinc-800 p-2 text-center ${col(r.seger.s1,r.seger.t)}' onblur='up(${i},\"seger\",\"s1\",this.innerText)'>${r.seger.s1}</td><td contenteditable class='edit border border-zinc-800 p-2 text-center ${col(r.seger.s2,r.seger.t)}' onblur='up(${i},\"seger\",\"s2\",this.innerText)'>${r.seger.s2}</td><td class='border border-zinc-800 p-2 tot'>${cg.tot}</td><td class='border border-zinc-800 p-2 text-center ${acvClass(cg.acv)}'>${cg.acv}%</td>
 </tr>`;
 });
-document.getElementById('info').innerText='📅 '+cur+' - 19 Toko | Warna: Hijau capai, Merah belum';
-let h=JSON.parse(localStorage.getItem('histFinal')||'[]');let hd=document.getElementById('hist');hd.innerHTML='';h.forEach(d=>{let a=d===cur?'bg-yellow-400 text-black':'bg-zinc-800 text-white';hd.innerHTML+=`<button onclick="openH('${d}')" class='${a} px-2 py-1 rounded text-[10px]'>${d}</button>`;});
+function set(id,val){document.getElementById(id).innerText=val;}
+set('f1',S.psm.t);set('f2',S.psm.s1);set('f3',S.psm.s2);set('f4',S.psm.tot);set('f5',(S.psm.t?Math.round(S.psm.tot/S.psm.t*100):0)+'%');
+set('f6',S.pwp.t);set('f7',S.pwp.s1);set('f8',S.pwp.s2);set('f9',S.pwp.tot);set('f10',(S.pwp.t?Math.round(S.pwp.tot/S.pwp.t*100):0)+'%');
+set('f11',S.serba.t);set('f12',S.serba.s1);set('f13',S.serba.s2);set('f14',S.serba.tot);set('f15',(S.serba.t?Math.round(S.serba.tot/S.serba.t*100):0)+'%');
+set('f16',S.seger.t);set('f17',S.seger.s1);set('f18',S.seger.s2);set('f19',S.seger.tot);set('f20',(S.seger.t?Math.round(S.seger.tot/S.seger.t*100):0)+'%');
+let allT=S.psm.t+S.pwp.t+S.serba.t+S.seger.t;let allA=S.psm.tot+S.pwp.tot+S.serba.tot+S.seger.tot;let acv=allT?Math.round(allA/allT*100):0;
+document.getElementById('kpiTgt').innerText=allT;document.getElementById('kpiAct').innerText=allA;document.getElementById('kpiAcv').innerText=acv+'%';document.getElementById('infoDate').innerText='📅 '+cur+' • 19 TOKO';
+let h=JSON.parse(localStorage.getItem('histPro')||'[]');let hd=document.getElementById('hist');hd.innerHTML='';h.forEach(d=>{let a=d===cur?'bg-yellow-400 text-black':'bg-zinc-800 text-zinc-400';hd.innerHTML+=`<button onclick="openH('${d}')" class='${a} px-3 py-1.5 rounded-full text-[11px] font-bold'>${d}</button>`;});
 }
-function up(i,cat,k,v){data[i][cat][k]=parseInt(v)||0;localStorage.setItem('FINAL_'+cur,JSON.stringify(data));render();}
-function saveAll(){localStorage.setItem('FINAL_'+cur,JSON.stringify(data));localStorage.setItem('lastFinal',cur);let h=JSON.parse(localStorage.getItem('histFinal')||'[]');if(!h.includes(cur)){h.push(cur);h.sort().reverse();localStorage.setItem('histFinal',JSON.stringify(h));}let el=document.getElementById('saved');el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),1500);render();}
+function up(i,cat,k,v){data[i][cat][k]=parseInt(v)||0;localStorage.setItem('PRO_'+cur,JSON.stringify(data));render();}
+function saveAll(){localStorage.setItem('PRO_'+cur,JSON.stringify(data));localStorage.setItem('lastPro',cur);let h=JSON.parse(localStorage.getItem('histPro')||'[]');if(!h.includes(cur)){h.push(cur);h.sort().reverse();localStorage.setItem('histPro',JSON.stringify(h));}let el=document.getElementById('savedBadge');el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),1500);render();}
 function changeDate(){cur=document.getElementById('tgl').value;data=load(cur);render();}
 function openH(d){cur=d;document.getElementById('tgl').value=d;data=load(d);render();}
-function exportCSV(){let csv='TGL,KODE,NAMA,PSM_T,S1,S2,TOT,ACV\\n';data.forEach(r=>{let cp=calc(r.psm);csv+=`${cur},${r.kode},${r.nama},${r.psm.t},${r.psm.s1},${r.psm.s2},${cp.tot},${cp.acv}%\\n`;});let b=new Blob([csv],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`LAP_FINAL_${cur}.csv`;a.click();}
+function exportCSV(){let csv='TGL,KODE,NAMA,PSM_T(100),S1,S2,TOT,ACV,PWP_T(100),S1,S2,TOT,ACV,SERBA_T(50),S1,S2,TOT,ACV,SEGER_T(50),S1,S2,TOT,ACV\\n';data.forEach(r=>{let cp=calc(r.psm),cw=calc(r.pwp),cs=calc(r.serba),cg=calc(r.seger);csv+=`${cur},${r.kode},${r.nama},${r.psm.t},${r.psm.s1},${r.psm.s2},${cp.tot},${cp.acv}%,${r.pwp.t},${r.pwp.s1},${r.pwp.s2},${cw.tot},${cw.acv}%,${r.serba.t},${r.serba.s1},${r.serba.s2},${cs.tot},${cs.acv}%,${r.seger.t},${r.seger.s1},${r.seger.s2},${cg.tot},${cg.acv}%\\n`;});let b=new Blob([csv],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`LAP_PRO_${cur}_19TOKO.csv`;a.click();}
 render();
 </script>
 </body>
