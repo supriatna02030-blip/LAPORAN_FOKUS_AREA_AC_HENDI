@@ -3,20 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LAP.FOKUS MKT PER JAM</title>
+<title>LAP.FOKUS MKT PER JAM AREA P'HENDY - 19 TOKO</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#080808;color:#eee} .mono{font-family:monospace} .edit:focus{outline:2px solid #22c55e;background:#142814!important}</style>
 </head>
-<body class="bg-black text-white p-2">
-<h1 class="bg-yellow-400 text-black font-bold p-3 text-center">LAP.FOKUS MKT PER JAM AREA P'HENDY - UPDATE 05-09-2026</h1>
-<!-- TABEL PSM PWP SERBA -->
-<div class="overflow-auto">
-<table class="w-full text-xs border border-zinc-700">
-<tr class="bg-cyan-400 text-black"><th>NO</th><th>KODE</th><th>NAMA TOKO</th><th colspan="5">PSM</th><th colspan="5">PWP</th><th colspan="5">SERBA</th><th colspan="3">SEGER</th></tr>
-<tr class="bg-yellow-300 text-black text-[10px]"><th></th><th></th><th></th><th>TARGET</th><th>ACT S1</th><th>ACT S2</th><th>TOTAL</th><th>ACV</th><th>TARGET</th><th>ACT S1</th><th>ACT S2</th><th>TOTAL</th><th>ACV</th><th>TARGET</th><th>ACT S1</th><th>ACT S2</th><th>TOTAL</th><th>ACV</th><th>TARGET</th><th>STRUK</th><th>ACT</th></tr>
-<tr class="bg-black border-b"><td>1</td><td>J937</td><td>ANGGREK III</td><td>100</td><td class="bg-green-900">30</td><td>0</td><td class="bg-red-600">30</td><td>30%</td><td>100</td><td class="bg-green-600">17</td><td></td><td>17</td><td>17%</td><td>50</td><td class="bg-green-600">12</td><td></td><td>12</td><td>24%</td><td>50</td><td>68</td><td>26</td></tr>
-<!-- COPY PASTE DATA LAIN DISINI -->
+<body>
+<div class="bg-yellow-400 text-black p-3 font-bold flex justify-between">
+<div>LAP.FOKUS MKT PER JAM AREA P'HENDY - 19 TOKO</div>
+<div><button onclick="exportCSV()" class="bg-black text-yellow-400 px-3 py-1 rounded text-xs">Export</button> <button onclick="saveData()" class="bg-green-600 text-white px-4 py-1 rounded text-xs">SIMPAN</button></div>
+</div>
+<div class="grid grid-cols-4 gap-2 p-2 bg-zinc-900 text-xs">
+<div class="bg-zinc-800 p-3 rounded">TOTAL STORE<br><b class="text-xl">19</b> Active</div>
+<div class="bg-zinc-800 p-3 rounded">TOTAL PSM TARGET<br><b id="kpi-target" class="text-xl">0</b></div>
+<div class="bg-zinc-800 p-3 rounded">TOTAL ACTUAL<br><b id="kpi-actual" class="text-xl">0</b></div>
+<div class="bg-zinc-800 p-3 rounded">AVG ACV<br><b id="kpi-acv" class="text-xl">0%</b></div>
+</div>
+<div class="p-2 overflow-auto">
+<table class="w-full text-[11px] font-mono border-collapse">
+<thead><tr class="bg-cyan-400 text-black"><th class="p-2 border">NO</th><th class="p-2 border">KODE</th><th class="p-2 border">NAMA TOKO</th><th class="p-2 border">PSM TGT</th><th class="p-2 border">ACT S1</th><th class="p-2 border">ACT S2</th><th class="p-2 border">TOTAL</th><th class="p-2 border">ACV</th><th class="p-2 border">PWP</th><th class="p-2 border">SERBA</th><th class="p-2 border">SEGER</th></tr></thead>
+<tbody id="tbody"></tbody>
+<tfoot><tr class="bg-yellow-400 text-black font-bold"><td colspan="3" class="p-2 text-center border">TOTAL</td><td id="ft-target" class="p-2 border"></td><td id="ft-s1" class="p-2 border"></td><td id="ft-s2" class="p-2 border"></td><td id="ft-total" class="p-2 border"></td><td id="ft-acv" class="p-2 border"></td><td id="ft-pwp" class="p-2 border"></td><td id="ft-serba" class="p-2 border"></td><td id="ft-seger" class="p-2 border"></td></tr></tfoot>
 </table>
 </div>
-<p class="text-center text-zinc-500 mt-4 text-xs">Editable - Klik angka untuk ubah. Auto hitung ACV = TOTAL/TARGET</p>
+<script>
+const defaultData=[
+{kode:'J937',nama:'ANGGREK III',psm:{t:100,s1:30,s2:0},pwp:17,serba:12,seger:26},
+{kode:'K791',nama:'KARBELA',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'K792',nama:'KARBELA 2',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'K796',nama:'KPDK',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'K797',nama:'SAMPOERNA 5',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'K930',nama:'KARBELA 3',psm:{t:100,s1:85,s2:0},pwp:25,serba:14,seger:20},
+{kode:'KD10',nama:'SETIABUDI BARAT',psm:{t:100,s1:85,s2:0},pwp:20,serba:12,seger:20},
+{kode:'KD32',nama:'BEK MURAD',psm:{t:100,s1:37,s2:0},pwp:13,serba:7,seger:11},
+{kode:'KD70',nama:'GAMA TOWER',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'KE48',nama:'OB GEDUNG WI',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'KF85',nama:'ST. SUDIRMAN',psm:{t:100,s1:30,s2:0},pwp:1,serba:0,seger:0},
+{kode:'KF33',nama:'KARET PEDURENAN',psm:{t:100,s1:45,s2:0},pwp:25,serba:20,seger:35},
+{kode:'KF37',nama:'KAWI RAYA 16',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'KF58',nama:'JPM DUKUH ATAS',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'KF67',nama:'GUNTUR RAYA 14',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'KG22',nama:'TANGKUBAN PERAHU',psm:{t:100,s1:50,s2:0},pwp:12,serba:8,seger:30},
+{kode:'KE19',nama:'KENDAL 24',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+{kode:'KE94',nama:'FPG BLORA MENTENG',psm:{t:100,s1:55,s2:0},pwp:11,serba:16,seger:12},
+{kode:'KF71',nama:'DS KUNINGAN',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+];
+let data=JSON.parse(localStorage.getItem('mkt19')||'null')||defaultData;
+function render(){
+ let tb=document.getElementById('tbody');tb.innerHTML='';let sumT=0,sumS1=0,sumS2=0,sumTot=0,sumPWP=0,sumSER=0,sumSEG=0;
+ data.forEach((r,i)=>{
+  let tot=r.psm.s1+r.psm.s2; sumT+=r.psm.t; sumS1+=r.psm.s1; sumS2+=r.psm.s2; sumTot+=tot; sumPWP+=r.pwp; sumSER+=r.serba; sumSEG+=r.seger;
+  let p=Math.round(tot/r.psm.t*100); let cls=p>=100?'bg-green-600 text-white':p>=50?'bg-yellow-500 text-black':'bg-red-600 text-white';
+  tb.innerHTML+=`<tr class='border-b border-zinc-700'><td class='p-2 border text-center'>${i+1}</td><td class='p-2 border'>${r.kode}</td><td class='p-2 border'>${r.nama}</td><td class='p-2 border text-center'>${r.psm.t}</td><td contenteditable class='edit p-2 border text-center bg-green-900/30' onblur='upd(${i},\"s1\",this.innerText)'>${r.psm.s1}</td><td contenteditable class='edit p-2 border text-center' onblur='upd(${i},\"s2\",this.innerText)'>${r.psm.s2}</td><td class='p-2 border text-center font-bold'>${tot}</td><td class='p-2 border text-center ${cls}'>${p}%</td><td class='p-2 border text-center'>${r.pwp}</td><td class='p-2 border text-center'>${r.serba}</td><td class='p-2 border text-center'>${r.seger}</td></tr>`;
+ });
+ document.getElementById('ft-target').innerText=sumT;document.getElementById('ft-s1').innerText=sumS1;document.getElementById('ft-s2').innerText=sumS2;document.getElementById('ft-total').innerText=sumTot;document.getElementById('ft-pwp').innerText=sumPWP;document.getElementById('ft-serba').innerText=sumSER;document.getElementById('ft-seger').innerText=sumSEG;
+ document.getElementById('kpi-target').innerText=sumT;document.getElementById('kpi-actual').innerText=sumTot;document.getElementById('kpi-acv').innerText=Math.round(sumTot/sumT*100)+'%';document.getElementById('ft-acv').innerText=Math.round(sumTot/sumT*100)+'%';
+}
+function upd(i,k,v){data[i].psm[k]=parseInt(v)||0;localStorage.setItem('mkt19',JSON.stringify(data));render();}
+function saveData(){localStorage.setItem('mkt19',JSON.stringify(data));alert('Tersimpan!');}
+function exportCSV(){let csv='KODE,NAMA,PSM_TARGET,SHIFT1,SHIFT2,TOTAL,ACV\n';data.forEach(r=>{let tot=r.psm.s1+r.psm.s2;csv+=`${r.kode},${r.nama},${r.psm.t},${r.psm.s1},${r.psm.s2},${tot},${Math.round(tot/r.psm.t*100)}%\n`;});let blob=new Blob([csv],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='LAP_19TOKO.csv';a.click();}
+render();
+</script>
 </body>
 </html>
