@@ -3,64 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LAP.FOKUS MKT PER JAM AREA P'HENDY - 19 TOKO</title>
+<title>LAP.FOKUS MKT 19 TOKO - Bisa Edit & Save Harian</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>body{background:#080808;color:#eee} .mono{font-family:monospace} .edit:focus{outline:2px solid #22c55e;background:#142814!important}</style>
+<style>
+body{background:#080808;color:#eee;font-family:system-ui}
+.mono{font-family:monospace}
+.edit{cursor:text;min-width:40px}
+.edit:focus{outline:2px solid #22c55e;background:#123212!important}
+.edit:hover{background:#222!important}
+</style>
 </head>
-<body>
-<div class="bg-yellow-400 text-black p-3 font-bold flex justify-between">
-<div>LAP.FOKUS MKT PER JAM AREA P'HENDY - 19 TOKO</div>
-<div><button onclick="exportCSV()" class="bg-black text-yellow-400 px-3 py-1 rounded text-xs">Export</button> <button onclick="saveData()" class="bg-green-600 text-white px-4 py-1 rounded text-xs">SIMPAN</button></div>
+<body class="pb-20">
+<div class="bg-yellow-400 text-black p-3 sticky top-0 z-20">
+<div class="flex flex-wrap justify-between items-center gap-2">
+<div><h1 class="font-bold">LAP.FOKUS MKT PER JAM AREA P'HENDY - 19 TOKO</h1><p class="text-xs">Klik angka hijau/biru untuk isi Actual - Auto hitung ACV</p></div>
+<div class="flex gap-2 items-center">
+<input type="date" id="tgl" class="bg-black text-yellow-400 px-3 py-1.5 rounded text-sm font-bold border" onchange="changeDate()">
+<button onclick="prevDay()" class="bg-black text-white px-2 py-1 rounded">◀</button>
+<button onclick="nextDay()" class="bg-black text-white px-2 py-1 rounded">▶</button>
+<button onclick="saveAll()" class="bg-green-600 text-white px-5 py-2 rounded font-bold text-sm">💾 SIMPAN</button>
+<button onclick="exportCSV()" class="bg-black text-white px-3 py-2 rounded text-xs">Export</button>
 </div>
+</div>
+<div class="flex gap-2 mt-2 text-[11px]"><span id="info-tgl" class="bg-black text-yellow-400 px-3 py-1 rounded"></span><span id="info-saved" class="bg-green-600 text-white px-3 py-1 rounded hidden">✓ Tersimpan</span><span class="bg-black text-white px-3 py-1 rounded">19 Toko Active - Klik sel untuk edit</span></div>
+</div>
+
 <div class="grid grid-cols-4 gap-2 p-2 bg-zinc-900 text-xs">
-<div class="bg-zinc-800 p-3 rounded">TOTAL STORE<br><b class="text-xl">19</b> Active</div>
-<div class="bg-zinc-800 p-3 rounded">TOTAL PSM TARGET<br><b id="kpi-target" class="text-xl">0</b></div>
-<div class="bg-zinc-800 p-3 rounded">TOTAL ACTUAL<br><b id="kpi-actual" class="text-xl">0</b></div>
-<div class="bg-zinc-800 p-3 rounded">AVG ACV<br><b id="kpi-acv" class="text-xl">0%</b></div>
+<div class="bg-zinc-800 p-2 rounded"><div class="text-zinc-400">TGL</div><div id="kpi-tgl" class="font-bold"></div></div>
+<div class="bg-zinc-800 p-2 rounded"><div class="text-zinc-400">TARGET</div><div id="kpi-target" class="font-bold text-xl">0</div></div>
+<div class="bg-zinc-800 p-2 rounded"><div class="text-zinc-400">ACTUAL</div><div id="kpi-actual" class="font-bold text-xl text-green-400">0</div></div>
+<div class="bg-zinc-800 p-2 rounded"><div class="text-zinc-400">ACV</div><div id="kpi-acv" class="font-bold text-xl text-yellow-400">0%</div></div>
 </div>
-<div class="p-2 overflow-auto">
-<table class="w-full text-[11px] font-mono border-collapse">
-<thead><tr class="bg-cyan-400 text-black"><th class="p-2 border">NO</th><th class="p-2 border">KODE</th><th class="p-2 border">NAMA TOKO</th><th class="p-2 border">PSM TGT</th><th class="p-2 border">ACT S1</th><th class="p-2 border">ACT S2</th><th class="p-2 border">TOTAL</th><th class="p-2 border">ACV</th><th class="p-2 border">PWP</th><th class="p-2 border">SERBA</th><th class="p-2 border">SEGER</th></tr></thead>
+
+<div class="p-2 overflow-auto max-h-[65vh] border border-zinc-800">
+<table class="w-full text-[11px] mono border-collapse">
+<thead class="sticky top-0 z-10">
+<tr class="bg-cyan-400 text-black"><th class="p-2 border">NO</th><th class="p-2 border">KODE</th><th class="p-2 border">NAMA</th><th class="p-2 border">TGT</th><th class="p-2 border bg-green-500">ACT S1</th><th class="p-2 border bg-blue-500 text-white">ACT S2</th><th class="p-2 border">TOTAL</th><th class="p-2 border">ACV</th><th class="p-2 border">PWP</th><th class="p-2 border">SERBA</th><th class="p-2 border">SEGER</th></tr>
+</thead>
 <tbody id="tbody"></tbody>
-<tfoot><tr class="bg-yellow-400 text-black font-bold"><td colspan="3" class="p-2 text-center border">TOTAL</td><td id="ft-target" class="p-2 border"></td><td id="ft-s1" class="p-2 border"></td><td id="ft-s2" class="p-2 border"></td><td id="ft-total" class="p-2 border"></td><td id="ft-acv" class="p-2 border"></td><td id="ft-pwp" class="p-2 border"></td><td id="ft-serba" class="p-2 border"></td><td id="ft-seger" class="p-2 border"></td></tr></tfoot>
+<tfoot><tr class="bg-yellow-400 text-black font-bold"><td colspan="3" class="p-2 text-center border">TOTAL 19 TOKO</td><td id="ft-target" class="p-2 border text-center">0</td><td id="ft-s1" class="p-2 border text-center bg-green-800 text-white">0</td><td id="ft-s2" class="p-2 border text-center bg-blue-800 text-white">0</td><td id="ft-total" class="p-2 border text-center">0</td><td id="ft-acv" class="p-2 border text-center">0%</td><td id="ft-pwp" class="p-2 border">0</td><td id="ft-serba" class="p-2 border">0</td><td id="ft-seger" class="p-2 border">0</td></tr></tfoot>
 </table>
 </div>
+
+<div class="p-2 bg-zinc-900 mt-2"><div class="text-xs font-bold mb-2">📅 HISTORY (klik untuk buka hari lain):</div><div id="history" class="flex gap-2 overflow-auto"></div></div>
+
 <script>
-const defaultData=[
-{kode:'J937',nama:'ANGGREK III',psm:{t:100,s1:30,s2:0},pwp:17,serba:12,seger:26},
-{kode:'K791',nama:'KARBELA',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'K792',nama:'KARBELA 2',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'K796',nama:'KPDK',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'K797',nama:'SAMPOERNA 5',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'K930',nama:'KARBELA 3',psm:{t:100,s1:85,s2:0},pwp:25,serba:14,seger:20},
-{kode:'KD10',nama:'SETIABUDI BARAT',psm:{t:100,s1:85,s2:0},pwp:20,serba:12,seger:20},
-{kode:'KD32',nama:'BEK MURAD',psm:{t:100,s1:37,s2:0},pwp:13,serba:7,seger:11},
-{kode:'KD70',nama:'GAMA TOWER',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'KE48',nama:'OB GEDUNG WI',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'KF85',nama:'ST. SUDIRMAN',psm:{t:100,s1:30,s2:0},pwp:1,serba:0,seger:0},
-{kode:'KF33',nama:'KARET PEDURENAN',psm:{t:100,s1:45,s2:0},pwp:25,serba:20,seger:35},
-{kode:'KF37',nama:'KAWI RAYA 16',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'KF58',nama:'JPM DUKUH ATAS',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'KF67',nama:'GUNTUR RAYA 14',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'KG22',nama:'TANGKUBAN PERAHU',psm:{t:100,s1:50,s2:0},pwp:12,serba:8,seger:30},
-{kode:'KE19',nama:'KENDAL 24',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
-{kode:'KE94',nama:'FPG BLORA MENTENG',psm:{t:100,s1:55,s2:0},pwp:11,serba:16,seger:12},
-{kode:'KF71',nama:'DS KUNINGAN',psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0},
+const tokoList=[
+{kode:'J937',nama:'ANGGREK III'},{kode:'K791',nama:'KARBELA'},{kode:'K792',nama:'KARBELA 2'},{kode:'K796',nama:'KPDK'},{kode:'K797',nama:'SAMPOERNA 5'},{kode:'K930',nama:'KARBELA 3'},{kode:'KD10',nama:'SETIABUDI BARAT'},{kode:'KD32',nama:'BEK MURAD'},{kode:'KD70',nama:'GAMA TOWER'},{kode:'KE48',nama:'OB GEDUNG WI'},{kode:'KF85',nama:'ST. SUDIRMAN'},{kode:'KF33',nama:'KARET PEDURENAN'},{kode:'KF37',nama:'KAWI RAYA 16'},{kode:'KF58',nama:'JPM DUKUH ATAS'},{kode:'KF67',nama:'GUNTUR RAYA 14'},{kode:'KG22',nama:'TANGKUBAN PERAHU'},{kode:'KE19',nama:'KENDAL 24'},{kode:'KE94',nama:'FPG BLORA MENTENG'},{kode:'KF71',nama:'DS KUNINGAN'},
 ];
-let data=JSON.parse(localStorage.getItem('mkt19')||'null')||defaultData;
+function todayStr(){return new Date().toISOString().slice(0,10);}
+let currentDate=localStorage.getItem('lastDate')||todayStr();
+document.getElementById('tgl').value=currentDate;
+function getKey(d){return 'mkt_'+d;}
+function loadDate(d){let r=localStorage.getItem(getKey(d));return r?JSON.parse(r):tokoList.map(t=>({kode:t.kode,nama:t.nama,psm:{t:100,s1:0,s2:0},pwp:0,serba:0,seger:0}));}
+function saveDate(d,data){localStorage.setItem(getKey(d),JSON.stringify(data));localStorage.setItem('lastDate',d);let h=JSON.parse(localStorage.getItem('history')||'[]');if(!h.includes(d)){h.push(d);h.sort().reverse();localStorage.setItem('history',JSON.stringify(h));}}
+let data=loadDate(currentDate);
 function render(){
- let tb=document.getElementById('tbody');tb.innerHTML='';let sumT=0,sumS1=0,sumS2=0,sumTot=0,sumPWP=0,sumSER=0,sumSEG=0;
- data.forEach((r,i)=>{
-  let tot=r.psm.s1+r.psm.s2; sumT+=r.psm.t; sumS1+=r.psm.s1; sumS2+=r.psm.s2; sumTot+=tot; sumPWP+=r.pwp; sumSER+=r.serba; sumSEG+=r.seger;
-  let p=Math.round(tot/r.psm.t*100); let cls=p>=100?'bg-green-600 text-white':p>=50?'bg-yellow-500 text-black':'bg-red-600 text-white';
-  tb.innerHTML+=`<tr class='border-b border-zinc-700'><td class='p-2 border text-center'>${i+1}</td><td class='p-2 border'>${r.kode}</td><td class='p-2 border'>${r.nama}</td><td class='p-2 border text-center'>${r.psm.t}</td><td contenteditable class='edit p-2 border text-center bg-green-900/30' onblur='upd(${i},\"s1\",this.innerText)'>${r.psm.s1}</td><td contenteditable class='edit p-2 border text-center' onblur='upd(${i},\"s2\",this.innerText)'>${r.psm.s2}</td><td class='p-2 border text-center font-bold'>${tot}</td><td class='p-2 border text-center ${cls}'>${p}%</td><td class='p-2 border text-center'>${r.pwp}</td><td class='p-2 border text-center'>${r.serba}</td><td class='p-2 border text-center'>${r.seger}</td></tr>`;
- });
- document.getElementById('ft-target').innerText=sumT;document.getElementById('ft-s1').innerText=sumS1;document.getElementById('ft-s2').innerText=sumS2;document.getElementById('ft-total').innerText=sumTot;document.getElementById('ft-pwp').innerText=sumPWP;document.getElementById('ft-serba').innerText=sumSER;document.getElementById('ft-seger').innerText=sumSEG;
- document.getElementById('kpi-target').innerText=sumT;document.getElementById('kpi-actual').innerText=sumTot;document.getElementById('kpi-acv').innerText=Math.round(sumTot/sumT*100)+'%';document.getElementById('ft-acv').innerText=Math.round(sumTot/sumT*100)+'%';
+let tb=document.getElementById('tbody');tb.innerHTML='';let sumT=0,sumS1=0,sumS2=0,sumTot=0,sumPWP=0,sumSER=0,sumSEG=0;
+data.forEach((r,i)=>{
+let tot=(r.psm.s1||0)+(r.psm.s2||0);sumT+=r.psm.t;sumS1+=r.psm.s1;sumS2+=r.psm.s2;sumTot+=tot;sumPWP+=r.pwp;sumSER+=r.serba;sumSEG+=r.seger;
+let p=Math.round(tot/r.psm.t*100)||0;let cls=p>=100?'bg-green-600 text-white':p>=50?'bg-yellow-500 text-black':'bg-red-600 text-white';
+tb.innerHTML+=`<tr class='border-b border-zinc-700'><td class='p-2 border text-center'>${i+1}</td><td class='p-2 border font-bold'>${r.kode}</td><td class='p-2 border'>${r.nama}</td><td class='p-2 border text-center bg-zinc-900'>${r.psm.t}</td><td contenteditable='true' class='edit p-2 border text-center bg-green-900/40 text-green-300 font-bold' onblur='upd(${i},\"s1\",this.innerText)'>${r.psm.s1}</td><td contenteditable='true' class='edit p-2 border text-center bg-blue-900/40 text-blue-300 font-bold' onblur='upd(${i},\"s2\",this.innerText)'>${r.psm.s2}</td><td class='p-2 border text-center font-bold'>${tot}</td><td class='p-2 border text-center ${cls}'>${p}%</td><td contenteditable='true' class='edit p-2 border text-center' onblur='upd2(${i},\"pwp\",this.innerText)'>${r.pwp}</td><td contenteditable='true' class='edit p-2 border text-center' onblur='upd2(${i},\"serba\",this.innerText)'>${r.serba}</td><td contenteditable='true' class='edit p-2 border text-center' onblur='upd2(${i},\"seger\",this.innerText)'>${r.seger}</td></tr>`;
+});
+document.getElementById('ft-target').innerText=sumT;document.getElementById('ft-s1').innerText=sumS1;document.getElementById('ft-s2').innerText=sumS2;document.getElementById('ft-total').innerText=sumTot;document.getElementById('ft-pwp').innerText=sumPWP;document.getElementById('ft-serba').innerText=sumSER;document.getElementById('ft-seger').innerText=sumSEG;
+document.getElementById('kpi-target').innerText=sumT;document.getElementById('kpi-actual').innerText=sumTot;let avg=sumT?Math.round(sumTot/sumT*100):0;document.getElementById('kpi-acv').innerText=avg+'%';document.getElementById('ft-acv').innerText=avg+'%';document.getElementById('kpi-tgl').innerText=currentDate;document.getElementById('info-tgl').innerText='📅 '+currentDate;renderHistory();
 }
-function upd(i,k,v){data[i].psm[k]=parseInt(v)||0;localStorage.setItem('mkt19',JSON.stringify(data));render();}
-function saveData(){localStorage.setItem('mkt19',JSON.stringify(data));alert('Tersimpan!');}
-function exportCSV(){let csv='KODE,NAMA,PSM_TARGET,SHIFT1,SHIFT2,TOTAL,ACV\n';data.forEach(r=>{let tot=r.psm.s1+r.psm.s2;csv+=`${r.kode},${r.nama},${r.psm.t},${r.psm.s1},${r.psm.s2},${tot},${Math.round(tot/r.psm.t*100)}%\n`;});let blob=new Blob([csv],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='LAP_19TOKO.csv';a.click();}
+function upd(i,k,v){data[i].psm[k]=parseInt(v)||0;saveDate(currentDate,data);render();}
+function upd2(i,k,v){data[i][k]=parseInt(v)||0;saveDate(currentDate,data);render();}
+function saveAll(){saveDate(currentDate,data);let el=document.getElementById('info-saved');el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),2000);renderHistory();}
+function changeDate(){currentDate=document.getElementById('tgl').value;data=loadDate(currentDate);render();}
+function prevDay(){let d=new Date(currentDate);d.setDate(d.getDate()-1);currentDate=d.toISOString().slice(0,10);document.getElementById('tgl').value=currentDate;data=loadDate(currentDate);render();}
+function nextDay(){let d=new Date(currentDate);d.setDate(d.getDate()+1);currentDate=d.toISOString().slice(0,10);document.getElementById('tgl').value=currentDate;data=loadDate(currentDate);render();}
+function renderHistory(){let hist=JSON.parse(localStorage.getItem('history')||'[]');let div=document.getElementById('history');div.innerHTML='';if(hist.length==0){div.innerHTML='<span class=text-zinc-600>Belum ada history</span>';return;}hist.forEach(date=>{let active=date===currentDate?'bg-yellow-400 text-black':'bg-zinc-800 text-white';div.innerHTML+=`<button onclick="loadHist('${date}')" class='${active} px-3 py-1 rounded text-xs'>${date}</button>`;});}
+function loadHist(date){currentDate=date;document.getElementById('tgl').value=date;data=loadDate(date);render();}
+function exportCSV(){let csv='TANGGAL,KODE,NAMA,TARGET,S1,S2,TOTAL,ACV\n';data.forEach(r=>{let tot=r.psm.s1+r.psm.s2;csv+=`${currentDate},${r.kode},${r.nama},${r.psm.t},${r.psm.s1},${r.psm.s2},${tot},${Math.round(tot/r.psm.t*100)}%\n`;});let blob=new Blob([csv],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`LAP_${currentDate}.csv`;a.click();}
 render();
 </script>
 </body>
